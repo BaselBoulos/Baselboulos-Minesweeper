@@ -9,6 +9,7 @@ var gLevel
 var gBoard
 var isTimerOn = false
 var gTimerInterval
+var gFlaggedMinesCount = 0
 
 gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 }
 gLevel = { SIZE: 4, MINES: 2 }
@@ -30,7 +31,7 @@ function buildBoard(size) {
         minesAroundCount: 0,
         isShown: false,
         isMine: false,
-        isMarked: true,
+        isMarked: false,
       }
     }
   }
@@ -93,55 +94,111 @@ function countMineNegs(cellI, cellJ, board) {
 
 // Called when a cell (td) is clicked
 function cellClicked(elCell, i, j, event) {
-  //   console.log(event.button)
-
-  // Doesn't matter right or left click stuff
   if (!gGame.isOn) return
+  if (gBoard[i][j].isShown) return
+
+  var pos = { i, j }
 
   if (!isTimerOn) {
     startTimer(Date.now())
-    isTimerOn = true
+    isTimerOn = !isTimerOn
   }
 
   // Right click stuff
   if (event.button === 2) {
-    gBoard[i][j].isMarked = true
-    elCell.innerHTML = FLAG
+    cellMarked(elCell, i, j)
     return
   }
 
+  // If flagged and we try to left click..
+  if (gBoard[i][j].isMarked) return
+
   // Left click stuff
-  if (event.button === 0) {
-    if (gBoard[i][j].isMine) {
-      elCell.innerHTML = MINE
-      return
-    }
-
-    if (gBoard[i][j].minesAroundCount === 0) {
-      elCell.innerHTML = EMPTY
-      return
-    }
-
-    if (gBoard[i][j].minesAroundCount > 0) {
-      var minesAroundCnt = gBoard[i][j].minesAroundCount
-      gBoard[i][j].isShown = true
-      elCell.innerHTML = minesAroundCnt
-      return
-    }
+  if (gBoard[i][j].isMine) {
+    gBoard[i][j].isShown = true
+    renderCell(pos, MINE)
+    gameOver()
+    return
   }
+  if (!gBoard[i][j].minesAroundCount) {
+    gBoard[i][j].isShown = true
+    renderCell(pos, EMPTY)
+  } else if (gBoard[i][j].minesAroundCount > 0) {
+    var minesAroundCnt = gBoard[i][j].minesAroundCount
+    gBoard[i][j].isShown = true
+    renderCell(pos, minesAroundCnt)
+  }
+
+  isVictory()
+}
+
+function resetGame() {
+  var timer = document.querySelector('.timer')
+  timer.innerText = '00:00:00'
+  clearInterval(gTimerInterval)
+  gTimerInterval = null
+  initGame()
 }
 
 /*
-TODO: Called on right click to mark a cell 
-(suspected to be a mine) Search the web (and implement) 
-how to hide the context menu on right click
+Called on right click to mark a cell that is suspected to be a mine
 */
-function cellMarked(elCell) {}
+function cellMarked(elCell, i, j) {
+  var pos = { i, j }
+  if (!gBoard[i][j].isMarked) {
+    renderCell(pos, FLAG)
+    gFlaggedMinesCount = gBoard[i][j].isMine
+      ? gFlaggedMinesCount + 1
+      : gFlaggedMinesCount
+  } else {
+    renderCell(pos, '')
+    gFlaggedMinesCount = gBoard[i][j].isMine
+      ? gFlaggedMinesCount - 1
+      : gFlaggedMinesCount
+  }
+  gBoard[i][j].isMarked = !gBoard[i][j].isMarked
+}
 
-/*
-Game ends when all mines are marked, and all the other cells are shown
-*/
-function checkGameOver() {}
+function renderCell(pos, value) {
+  var elCell = document.querySelector(`.cell${pos.i}-${pos.j}`)
+  elCell.innerHTML = value
+}
+
+function gameOver() {
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard.length; j++) {
+      var cell = gBoard[i][j]
+      var pos = { i, j }
+      if (cell.isMine) renderCell(pos, MINE)
+    }
+    gGame.isOn = false
+    clearInterval(gTimerInterval)
+    gTimerInterval = null
+  }
+}
+
+function isVictory() {
+  var totalCells = gLevel.SIZE ** 2
+  var revealedCellsCnt = 0
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard.length; j++) {
+      var cell = gBoard[i][j]
+      if (!cell.isMine && cell.isShown) {
+        revealedCellsCnt++
+      }
+    }
+  }
+  var playedCellsCount = revealedCellsCnt + gFlaggedMinesCount
+  var isWinner = playedCellsCount === totalCells ? true : false
+  if (isWinner) {
+    console.log('You are a Winner')
+    gGame.isOn = false
+    clearInterval(gTimerInterval)
+    gTimerInterval = null
+  } else {
+    console.log('not a winner yet')
+  }
+}
 
 /*
 When user clicks a cell with no mines around, we need to open not only that cell, but also its neighbors.
@@ -169,7 +226,7 @@ function setMode(elMode) {
       gLevel.MINES = 2
       break
   }
-  initGame()
+  resetGame()
 }
 
 function startTimer(startTime) {
