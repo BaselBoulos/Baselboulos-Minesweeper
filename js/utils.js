@@ -4,7 +4,7 @@ function printMat(mat, selector) {
     strHTML += `<tr>`
     for (var j = 0; j < mat[0].length; j++) {
       var className = `cell cell${i}-${j}`
-      strHTML += `<td class="${className}" onmousedown="cellClicked(this,${i},${j},event)"></td>`
+      strHTML += `<td class="${className}" onmousedown="cellClicked(${i},${j},event)"></td>`
     }
     strHTML += `<tr>`
   }

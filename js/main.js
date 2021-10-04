@@ -1,23 +1,46 @@
 'use strict'
 
+/*
+
+TODOs:
+
+- Save the seconds in the gGame object, don't forget to reset when reseting the game and init
+- Make modals divs for WIN/LOSE/LIVES..Etc
+
+-Ideas-
+- probably can make isWin property in the gGame object..and do something with it to check winning
+- Check all the guidelines and read the PDF again
+- Can do something with the levels, maybe 1 object for each level in gLevel ? instead of setMode or something
+
+*/
+
 const MINE = '💣'
 const FLAG = '🚩'
 const EMPTY = '🗅'
+const DEFAULT_SMILEY = '😊'
+const DEAD_SMILEY = '🥴'
+const WINNER_SMILEY = '😎'
 
-var gBoard
 var gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 }
 var gLevel = { SIZE: 4, MINES: 2 }
+var gBoard
 
-var gFlaggedMinesCount
+var gFlagMinesCnt
 var isTimerOn
 var gTimerInterval
+var gLives
 var gMinesPos = []
 
 function initGame() {
   gBoard = buildBoard(gLevel.SIZE, gLevel.MINES)
-  gFlaggedMinesCount = 0
+  gFlagMinesCnt = 0
   printMat(gBoard, '.board-container')
+  gGame.markedCount = 0
+  gGame.shownCount = 0
+  gLives = 3
+  gMinesPos = []
   isTimerOn = false
+  renderSmiley(DEFAULT_SMILEY)
   gGame.isOn = true
 }
 
@@ -34,10 +57,91 @@ function buildBoard(size) {
       }
     }
   }
-  board = setMinesOnBoard(board, gLevel.MINES)
-  setMinesNegsCount(board)
-  printBoard(board)
   return board
+}
+
+function cellClicked(i, j, event) {
+  if (!gGame.isOn) return
+  if (gBoard[i][j].isShown) return
+  if (!isTimerOn) {
+    startTimer(Date.now())
+    isTimerOn = !isTimerOn
+  }
+  if (event.button === 2) {
+    handleRightClick(i, j)
+    return
+  }
+  if (gBoard[i][j].isMarked) return
+
+  var pos = { i, j }
+  if (!gGame.shownCount) {
+    gBoard[i][j].isShown = true
+    renderCell(pos, EMPTY)
+    gGame.shownCount++
+    // printBoard(gBoard)
+    gBoard = setMinesOnBoard(gBoard, gLevel.MINES)
+    setMinesNegsCount(gBoard)
+    // printBoard(gBoard)
+    expandShown(gBoard, i, j)
+    return
+  }
+
+  if (gBoard[i][j].isMine) {
+    if (gLives) {
+      gBoard[i][j].isShown = true
+      renderCell(pos, MINE)
+      gGame.shownCount++
+      renderSmiley(DEAD_SMILEY)
+      gLives--
+    } else {
+      gameOver()
+    }
+    isVictory()
+    return
+  }
+
+  var cellNegsCount = gBoard[i][j].minesAroundCount
+  var cellVal = cellNegsCount > 0 ? cellNegsCount : EMPTY
+  if (!cellNegsCount) expandShown(gBoard, i, j)
+  gBoard[i][j].isShown = true
+  renderCell(pos, cellVal)
+  renderSmiley(DEFAULT_SMILEY)
+  gGame.shownCount++
+  isVictory()
+}
+
+function handleRightClick(i, j) {
+  cellMarked(i, j)
+  var currCell = gBoard[i][j]
+  gGame.markedCount = currCell.isMarked
+    ? gGame.markedCount + 1
+    : gGame.markedCount - 1
+  if (currCell.isMarked) isVictory()
+  if (currCell.isMine) {
+    gFlagMinesCnt = currCell.isMarked ? gFlagMinesCnt + 1 : gFlagMinesCnt - 1
+  }
+}
+
+function expandShown(board, cellI, cellJ) {
+  for (var i = cellI - 1; i <= cellI + 1; i++) {
+    if (i < 0 || i >= board.length) continue
+    for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+      if (i === cellI && j === cellJ) continue
+      if (j < 0 || j >= board[i].length) continue
+      if (
+        !board[i][j].isMarked &&
+        !board[i][j].isShown &&
+        !board[i][j].isMine
+      ) {
+        board[i][j].isShown = !board[i][j].isShown
+        gGame.shownCount++
+        var pos = { i, j }
+        var cellNegsCount = board[i][j].minesAroundCount
+        var cellVal = cellNegsCount > 0 ? cellNegsCount : EMPTY
+        renderCell(pos, cellVal)
+      }
+    }
+  }
 }
 
 function setMinesOnBoard(board, minesCount) {
@@ -45,6 +149,7 @@ function setMinesOnBoard(board, minesCount) {
     var pos = getRandNonMinePos(board)
     gMinesPos.push(pos)
     board[pos.i][pos.j].isMine = !board[pos.i][pos.j].isMine
+    if (board[pos.i][pos.j].isMarked) gFlagMinesCnt++
   }
   return board
 }
@@ -53,7 +158,8 @@ function getRandNonMinePos(board) {
   var nonMineCells = []
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board[0].length; j++) {
-      if (!board[i][j].isMine) nonMineCells.push({ i: i, j: j })
+      if (!board[i][j].isMine && !board[i][j].isShown)
+        nonMineCells.push({ i: i, j: j })
     }
   }
   if (!nonMineCells.length) return
@@ -65,7 +171,7 @@ function getRandNonMinePos(board) {
 function setMinesNegsCount(board) {
   var mineNegsCount = 0
   for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board.length; j++) {
+    for (var j = 0; j < board.length[0]; j++) {
       mineNegsCount = countMineNegs(i, j, board)
       board[i][j].minesAroundCount = mineNegsCount
     }
@@ -85,79 +191,12 @@ function countMineNegs(cellI, cellJ, board) {
   return mineNegsCount
 }
 
-// Called when a cell (td) is clicked
-function cellClicked(elCell, i, j, event) {
-  if (!gGame.isOn) return
-  if (gBoard[i][j].isShown) return
-
-  var pos = { i, j }
-
-  if (!isTimerOn) {
-    startTimer(Date.now())
-    isTimerOn = !isTimerOn
-  }
-
-  // Right click stuff
-  if (event.button === 2) {
-    cellMarked(i, j)
-    isVictory()
-    return
-  }
-
-  // If flagged and we try to left click..
-  if (gBoard[i][j].isMarked) return
-
-  // Left click stuff
-  if (gBoard[i][j].isMine) {
-    gBoard[i][j].isShown = true
-    renderCell(pos, MINE)
-    gameOver()
-    return
-  }
-
-  if (!gBoard[i][j].minesAroundCount) {
-    // means no negs around we should open all this elCell negs
-    expandShown(gBoard, i, j)
-    gBoard[i][j].isShown = true
-    renderCell(pos, EMPTY)
-  } else if (gBoard[i][j].minesAroundCount > 0) {
-    var minesAroundCnt = gBoard[i][j].minesAroundCount
-    gBoard[i][j].isShown = true
-    renderCell(pos, minesAroundCnt)
-  }
-  isVictory()
-}
-
-/*
-When user clicks a cell with no mines around, we need to open not only that cell, but also its neighbors.
-NOTE: start with a basic implementation that only opens the non-mine 1st degree neighbors 
-BONUS: if you have the time later, try to work more like the real algorithm (see description at the Bonuses section below)
-*/
-function expandShown(board, cellI, cellJ) {
-  for (var i = cellI - 1; i <= cellI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
-    for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-      if (i === cellI && j === cellJ) continue
-      if (j < 0 || j >= board[i].length) continue
-      var pos = { i, j }
-      if (!gBoard[i][j].isMarked) {
-        board[i][j].isShown = true
-        renderCell(pos, board[i][j].minesAroundCount)
-      }
-      isVictory()
-    }
-  }
-}
-
-// TODO: To refactor this function
-function cellMarked(i, j) {
-  var pos = { i, j }
-  if (!gBoard[i][j].isMarked) renderCell(pos, FLAG)
+function cellMarked(cellI, cellJ) {
+  var pos = { i: cellI, j: cellJ }
+  var currCell = gBoard[cellI][cellJ]
+  if (!currCell.isMarked) renderCell(pos, FLAG)
   else renderCell(pos, '')
-  gBoard[i][j].isMarked = !gBoard[i][j].isMarked
-  if (gBoard[i][j].isMine && gBoard[i][j].isMarked) gFlaggedMinesCount++
-  else if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) gFlaggedMinesCount--
-  //   console.log(gFlaggedMinesCount)
+  currCell.isMarked = !gBoard[cellI][cellJ].isMarked
 }
 
 function resetGame() {
@@ -166,6 +205,7 @@ function resetGame() {
   clearInterval(gTimerInterval)
   if (gTimerInterval) gTimerInterval = null
   isTimerOn = !isTimerOn
+  gMinesPos = []
   initGame()
 }
 
@@ -175,32 +215,24 @@ function gameOver() {
     gBoard[currMinePos.i][currMinePos.j].isShown = true
     renderCell(currMinePos, MINE)
   }
+  gMinesPos = []
   gGame.isOn = false
   clearInterval(gTimerInterval)
   if (gTimerInterval) gTimerInterval = null
+  renderSmiley(DEAD_SMILEY)
+  console.log('You lost..Make a modal here.')
 }
 
 function isVictory() {
   var totalCells = gLevel.SIZE ** 2
-  var revealedCount = 0
-  for (var i = 0; i < gBoard.length; i++) {
-    for (var j = 0; j < gBoard.length; j++) {
-      var cell = gBoard[i][j]
-      if (!cell.isMine && cell.isShown) {
-        revealedCount++
-      }
-    }
-  }
-  var playedCellsCount = revealedCount + gFlaggedMinesCount
+  var playedCellsCount = gGame.shownCount + gFlagMinesCnt
   var isWinner = playedCellsCount === totalCells ? true : false
-  if (isWinner) {
-    console.log('You are a Winner')
-    gGame.isOn = false
-    clearInterval(gTimerInterval)
-    if (gTimerInterval) gTimerInterval = null
-  } else {
-    console.log('not a winner yet')
-  }
+  if (!isWinner) return
+  clearInterval(gTimerInterval)
+  if (gTimerInterval) gTimerInterval = null
+  gGame.isOn = false
+  renderSmiley(WINNER_SMILEY)
+  console.log('You are a Winner make a modal')
 }
 
 function setMode(elMode) {
@@ -242,6 +274,11 @@ function startTimer(startTime) {
 function renderCell(pos, value) {
   var elCell = document.querySelector(`.cell${pos.i}-${pos.j}`)
   elCell.innerHTML = value
+}
+
+function renderSmiley(smiley) {
+  var elMainContainer = document.querySelector('.game-controller')
+  elMainContainer.innerHTML = `<span class="smiley" onclick="resetGame()">${smiley}</span>`
 }
 
 // Currently only used for debugging
