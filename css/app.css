@@ -1,0 +1,58 @@
+body {
+  background-color: darkslategrey;
+}
+
+.page-header {
+  text-align: center;
+  color: white;
+}
+
+.main-container {
+  max-width: 800px;
+  height: auto;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  background-color: darkcyan;
+  border: 2px solid blue;
+  border-radius: 25px;
+  -webkit-box-shadow: 0px 0px 15px 5px rgba(82, 54, 240, 0.79);
+  box-shadow: 0px 0px 15px 5px rgba(18, 135, 198, 0.79);
+}
+
+.controls {
+  padding: 5px;
+}
+
+.levels {
+  margin: 5px;
+  padding: 5px;
+  font-size: 20px;
+}
+
+.timer {
+  margin: 5px;
+  padding: 5px;
+  color: white;
+  font-size: 25px;
+}
+
+.board-container table {
+  /* Maybe box sizing can help here ? Check it out on free time */
+  display: inline-block;
+  width: auto;
+  height: auto;
+  margin: 10px;
+  padding: 10px;
+  border: 2px solid blue;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 15px 5px rgba(82, 54, 240, 0.79);
+  box-shadow: 0px 0px 15px 5px rgba(18, 135, 198, 0.79);
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+}

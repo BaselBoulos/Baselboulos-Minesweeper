@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" href="img/favicon.png" />
+    <header class="page-header"><h1>Minesweeper</h1></header>
+  </head>
+  <body onload="initGame()">
+    <div class="main-container">
+      <div class="controls">
+        <div class="levels">
+          <label
+            ><input
+              type="radio"
+              data-level="Beginner"
+              onclick="setMode(this)"
+              name="level"
+              checked
+            />Beginner</label
+          >
+
+          <label
+            ><input
+              type="radio"
+              data-level="Medium"
+              onclick="setMode(this)"
+              name="level"
+            />Medium</label
+          >
+
+          <label
+            ><input
+              type="radio"
+              data-level="Expert"
+              onclick="setMode(this)"
+              name="level"
+            />Expert</label
+          >
+        </div>
+        <div class="timer">00:00:00</div>
+      </div>
+      <div class="board-container"></div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
