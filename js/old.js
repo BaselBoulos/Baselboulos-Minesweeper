@@ -69,3 +69,44 @@ function getClassName(pos) {
   var cellClass = 'cell-' + pos.i + '-' + pos.j
   return cellClass
 }
+
+function buildBoard(size) {
+  var board = []
+  for (var i = 0; i < size; i++) {
+    board.push([])
+    for (var j = 0; j < size; j++) {
+      board[i][j] = {
+        minesAroundCount: 0,
+        isShown: false,
+        isMine: false,
+        isMarked: true,
+      }
+    }
+  }
+  // Example to check if working for a 9x9 board,
+  // Seems to be working great!
+  //   board[0][0].isMine = true
+  //   board[0][0].isShown = true
+  //   board[0][4].isMine = true
+  //   board[0][4].isShown = true
+  //   board[0][7].isMine = true
+  //   board[0][7].isShown = true
+  //   board[4][1].isMine = true
+  //   board[4][1].isShown = true
+  //   board[6][0].isMine = true
+  //   board[6][0].isShown = true
+  //   board[6][2].isMine = true
+  //   board[6][2].isShown = true
+  //   board[6][4].isMine = true
+  //   board[6][4].isShown = true
+  //   board[7][7].isMine = true
+  //   board[7][7].isShown = true
+  //   board[8][3].isMine = true
+  //   board[8][3].isShown = true
+  //   board[8][5].isMine = true
+  //   board[8][5].isShown = true
+  setMinesNegsCount(board)
+  board = setMinesOnBoard(board)
+  printBoard(board)
+  return board
+}

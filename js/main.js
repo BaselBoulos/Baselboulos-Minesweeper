@@ -1,20 +1,26 @@
 'use strict'
 
 const MINE = '💣'
-const EMPTY = ' '
+const FLAG = '🚩'
+const EMPTY = '🗅'
 
 var gGame
 var gLevel
 var gBoard
+var isTimerOn = false
+var gTimerInterval
 
 gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 }
 gLevel = { SIZE: 4, MINES: 2 }
 
+// This is called when page loads
 function initGame() {
   gBoard = buildBoard(gLevel.SIZE, gLevel.MINES)
+  gGame.isOn = true
   printMat(gBoard, '.board-container')
 }
 
+// Builds the board Set mines at random locations Call setMinesNegsCount() Return the created board
 function buildBoard(size) {
   var board = []
   for (var i = 0; i < size; i++) {
@@ -28,34 +34,13 @@ function buildBoard(size) {
       }
     }
   }
-  // Example to check if working for a 9x9 board,
-  // Seems to be working great!
-  //   board[0][0].isMine = true
-  //   board[0][0].isShown = true
-  //   board[0][4].isMine = true
-  //   board[0][4].isShown = true
-  //   board[0][7].isMine = true
-  //   board[0][7].isShown = true
-  //   board[4][1].isMine = true
-  //   board[4][1].isShown = true
-  //   board[6][0].isMine = true
-  //   board[6][0].isShown = true
-  //   board[6][2].isMine = true
-  //   board[6][2].isShown = true
-  //   board[6][4].isMine = true
-  //   board[6][4].isShown = true
-  //   board[7][7].isMine = true
-  //   board[7][7].isShown = true
-  //   board[8][3].isMine = true
-  //   board[8][3].isShown = true
-  //   board[8][5].isMine = true
-  //   board[8][5].isShown = true
-  setMinesNegsCount(board)
   board = setMinesOnBoard(board)
+  setMinesNegsCount(board)
   printBoard(board)
   return board
 }
 
+// Count mines around each cell and set the cell's minesAroundCount.
 function setMinesOnBoard(board) {
   for (var i = 0; i < gLevel.MINES; i++) {
     var pos = getRandPos(board)
@@ -106,23 +91,63 @@ function countMineNegs(cellI, cellJ, board) {
   return mineNegsCount
 }
 
-function cellClicked(elCell, i, j) {
-  //   if (!gGame.isOn) return
-  if (gBoard[i][j].minesAroundCount > 0) {
-    var num = gBoard[i][j].minesAroundCount
-    gBoard[i][j].isShown = true
-    console.log(gBoard[i][j])
-    elCell.innerHTML = num
+// Called when a cell (td) is clicked
+function cellClicked(elCell, i, j, event) {
+  //   console.log(event.button)
+
+  // Doesn't matter right or left click stuff
+  if (!gGame.isOn) return
+
+  if (!isTimerOn) {
+    startTimer(Date.now())
+    isTimerOn = true
+  }
+
+  // Right click stuff
+  if (event.button === 2) {
+    gBoard[i][j].isMarked = true
+    elCell.innerHTML = FLAG
+    return
+  }
+
+  // Left click stuff
+  if (event.button === 0) {
+    if (gBoard[i][j].isMine) {
+      elCell.innerHTML = MINE
+      return
+    }
+
+    if (gBoard[i][j].minesAroundCount === 0) {
+      elCell.innerHTML = EMPTY
+      return
+    }
+
+    if (gBoard[i][j].minesAroundCount > 0) {
+      var minesAroundCnt = gBoard[i][j].minesAroundCount
+      gBoard[i][j].isShown = true
+      elCell.innerHTML = minesAroundCnt
+      return
+    }
   }
 }
 
-// TODO:
+/*
+TODO: Called on right click to mark a cell 
+(suspected to be a mine) Search the web (and implement) 
+how to hide the context menu on right click
+*/
 function cellMarked(elCell) {}
 
-// TODO:
+/*
+Game ends when all mines are marked, and all the other cells are shown
+*/
 function checkGameOver() {}
 
-// TODO:
+/*
+When user clicks a cell with no mines around, we need to open not only that cell, but also its neighbors.
+NOTE: start with a basic implementation that only opens the non-mine 1st degree neighbors 
+BONUS: if you have the time later, try to work more like the real algorithm (see description at the Bonuses section below)
+*/
 function expandShown(board, elCell, i, j) {}
 
 function setMode(elMode) {
@@ -145,6 +170,20 @@ function setMode(elMode) {
       break
   }
   initGame()
+}
+
+function startTimer(startTime) {
+  var elTimer = document.querySelector('.timer')
+  gTimerInterval = setInterval(() => {
+    var totalSecs = Math.floor((Date.now() - startTime) / 1000)
+    var hour = Math.floor(totalSecs / 3600)
+    var minute = Math.floor((totalSecs - hour * 3600) / 60)
+    var seconds = totalSecs - (hour * 3600 + minute * 60)
+    if (hour < 10) hour = '0' + hour
+    if (minute < 10) minute = '0' + minute
+    if (seconds < 10) seconds = '0' + seconds
+    elTimer.innerHTML = `${hour}:${minute}:${seconds}`
+  }, 1000)
 }
 
 // Currently only used for debugging
