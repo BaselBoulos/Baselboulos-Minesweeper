@@ -160,6 +160,9 @@ function expandShown(board, cellI, cellJ) {
         var cellVal = cellNegsCount > 0 ? cellNegsCount : EMPTY
         // DOM:
         renderCell(pos, cellVal)
+        if (cellVal === EMPTY) {
+          expandShown(board, pos.i, pos.j)
+        }
       }
     }
   }
