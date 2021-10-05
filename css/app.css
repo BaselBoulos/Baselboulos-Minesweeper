@@ -77,26 +77,38 @@ body {
   height: 40px;
   overflow: hidden;
   font-size: 25px;
-  color: green;
+  color: white;
   cursor: pointer;
   border: 1px solid #ccc;
   background-color: #eee;
   box-shadow: inset 5px 5px 10px #fff, inset -3px -3px 5px rgb(168, 140, 140);
   transition-property: background-color, box-shadow;
-  transition-duration: 2s;
+  transition-duration: 1s;
   transition-timing-function: ease-out;
+}
+
+.cell:hover {
+  cursor: pointer;
+  background-color: darkcyan;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 .cell::selection {
   background: transparent;
 }
 
-/* TODO: THESE properties should work when we reveal a cell, maybe add a class reveal in the js ? */
-.cell:hover {
-  background-color: rgb(235, 222, 222);
+.cell.revealed {
+  background-color: darkcyan;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+  cursor: default;
+}
+
+.cell.mine {
+  background-color: red;
 }
 
 .indicator {
