@@ -31,6 +31,7 @@ body {
 }
 
 .timer,
+.best-score,
 .lives {
   display: inline-block;
   margin: 5px;

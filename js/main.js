@@ -29,6 +29,7 @@ function initGame() {
   isTimerOn = false
   renderSmiley(DEFAULT_SMILEY)
   gGame.isOn = true
+  renderBestScore()
 }
 
 function buildBoard(size) {
@@ -54,6 +55,7 @@ function cellClicked(elCell, i, j, event) {
     startTimer(Date.now())
     isTimerOn = !isTimerOn
   }
+
   if (event.button === 2) {
     handleRightClick(i, j)
     return
@@ -74,6 +76,7 @@ function cellClicked(elCell, i, j, event) {
     gBoard = setMinesOnBoard(gBoard, gLevel.MINES)
     setMinesNegsCount(gBoard)
     expandShown(gBoard, i, j)
+    printBoard(gBoard)
     return
   }
 
@@ -107,10 +110,10 @@ function handleRightClick(i, j) {
   gGame.markedCount = currCell.isMarked
     ? gGame.markedCount + 1
     : gGame.markedCount - 1
-  if (currCell.isMarked) isVictory()
   if (currCell.isMine) {
     gFlagMinesCnt = currCell.isMarked ? gFlagMinesCnt + 1 : gFlagMinesCnt - 1
   }
+  isVictory()
 }
 
 function cellMarked(i, j) {
@@ -232,7 +235,8 @@ function isVictory() {
   var playedCellsCount = gGame.shownCount + gFlagMinesCnt
   var isWinner = playedCellsCount === totalCells ? true : false
   if (!isWinner) return
-  else openGameModal(isWinner)
+  openGameModal(isWinner)
+  handleLocalStorage()
 }
 
 function openGameModal(isWin) {
@@ -300,6 +304,32 @@ function startTimer(startTime) {
     elTimerSpan.innerHTML = `${hour}:${minute}:${seconds}`
     gGame.secsPassed++
   }, 1000)
+}
+
+function handleLocalStorage() {
+  var highestScore = +localStorage.getItem(`bestScore-board-${gLevel.SIZE}`)
+  if (highestScore === 0) {
+    localStorage.setItem(`bestScore-board-${gLevel.SIZE}`, gGame.secsPassed)
+  } else {
+    if (gGame.secsPassed < highestScore) {
+      localStorage.setItem(`bestScore-board-${gLevel.SIZE}`, gGame.secsPassed)
+    }
+  }
+}
+
+function renderBestScore() {
+  var highestScore = +localStorage.getItem(`bestScore-board-${gLevel.SIZE}`)
+  if (!highestScore) {
+    localStorage.setItem(`bestScore-board-${gLevel.SIZE}`, gGame.secsPassed)
+  }
+  var seconds = highestScore
+  var hour = Math.floor(seconds / 3600)
+  var minute = Math.floor((seconds - hour * 3600) / 60)
+  if (hour < 10) hour = '0' + hour
+  if (minute < 10) minute = '0' + minute
+  if (seconds < 10) seconds = '0' + seconds
+  var elBestScoreSpan = document.querySelector('.best-score span')
+  elBestScoreSpan.innerHTML = `${hour}:${minute}:${seconds}`
 }
 
 function renderCell(pos, value) {
