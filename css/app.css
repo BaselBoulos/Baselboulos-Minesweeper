@@ -1,67 +1,151 @@
 body {
-  background-color: darkslategrey;
+  background-color: black;
+  text-align: center;
+  color: #869c9c;
 }
 
 .page-header {
-  text-align: center;
-  color: white;
+  font-family: Cursive;
+  letter-spacing: 3px;
+  color: #869c9c;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .main-container {
-  max-width: 800px;
-  height: auto;
-  margin-top: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  background-color: darkcyan;
-  border: 2px solid blue;
-  border-radius: 25px;
-  -webkit-box-shadow: 0px 0px 15px 5px rgba(82, 54, 240, 0.79);
-  box-shadow: 0px 0px 15px 5px rgba(18, 135, 198, 0.79);
+  padding: 10px;
+  width: auto;
 }
 
-.controls {
-  padding: 5px;
+.game-window {
+  display: table;
+  margin: auto;
 }
 
-.levels {
+.levels,
+.smiley,
+.game-controller {
+  margin: 2px;
+  padding: 3px;
+  font-size: 25px;
+}
+
+.timer,
+.lives {
+  display: inline-block;
   margin: 5px;
   padding: 5px;
   font-size: 20px;
 }
 
-.timer {
-  margin: 5px;
-  padding: 5px;
-  color: white;
-  font-size: 25px;
+.lives span {
+  color: red;
 }
 
-.smiley {
+.levels label:hover,
+.smiley:hover {
+  color: yellowgreen;
   cursor: pointer;
+  position: relative;
+  top: 1px;
+}
+
+.levels label:active,
+.smiley:active {
+  position: relative;
+  top: 2px;
+}
+
+.board-container {
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
 }
 
 .board-container table {
-  /* Maybe box sizing can help here ? Check it out on free time */
-  display: inline-block;
-  width: auto;
-  height: auto;
-  margin: 10px;
-  padding: 10px;
-  border: 2px solid blue;
-  border-radius: 10px;
+  width: fit-content;
+  border-collapse: collapse;
+  border: 2px solid #ccc;
+  border-radius: 5px;
   -webkit-box-shadow: 0px 0px 15px 5px rgba(82, 54, 240, 0.79);
   box-shadow: 0px 0px 15px 5px rgba(18, 135, 198, 0.79);
 }
 
 .cell {
-  width: 50px;
-  height: 50px;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  font-size: 25px;
+  color: green;
   cursor: pointer;
-  border: 1px solid black;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  box-shadow: inset 5px 5px 10px #fff, inset -3px -3px 5px rgb(168, 140, 140);
+  transition-property: background-color, box-shadow;
+  transition-duration: 2s;
+  transition-timing-function: ease-out;
+}
+
+.cell::selection {
+  background: transparent;
+}
+
+/* TODO: THESE properties should work when we reveal a cell, maybe add a class reveal in the js ? */
+.cell:hover {
+  background-color: rgb(235, 222, 222);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.indicator {
+  visibility: hidden;
+  margin: 5px;
+  padding: 10px;
+  color: red;
+}
+
+.game-modal {
+  color: green;
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  width: 250px;
+}
+
+.playagain-btn {
+  display: inline-block;
+  box-shadow: inset 0px 1px 0px 0px #caefab;
+  text-shadow: 0px 1px 0px #aade7c;
+  background: linear-gradient(to bottom, #77d42a 5%, #5cb811 100%);
+  background-color: #77d42a;
+  border: 1px solid #268a16;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #306108;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 6px 24px;
+}
+
+.playagain-btn:hover {
+  background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
+  background-color: #5cb811;
+}
+
+.playagain-btn:active {
+  position: relative;
+  top: 1px;
 }
 
 footer {
-  text-align: center;
+  font-family: Cursive;
+  letter-spacing: 3px;
+  font-size: 20px;
+  color: #869c9c;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(255, 255, 255, 0.5);
 }

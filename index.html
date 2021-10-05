@@ -11,40 +11,48 @@
   </head>
   <body onload="initGame()">
     <div class="main-container">
-      <div class="controls">
-        <div class="levels">
-          <label
-            ><input
-              type="radio"
-              data-level="Beginner"
-              onclick="setMode(this)"
-              name="level"
-              checked
-            />Beginner</label
-          >
+      <div class="game-window">
+        <div class="controls">
+          <div class="levels">
+            <label
+              ><input
+                type="radio"
+                data-level="Beginner"
+                onclick="setMode(this)"
+                name="level"
+                checked
+              />Beginner</label
+            >
 
-          <label
-            ><input
-              type="radio"
-              data-level="Medium"
-              onclick="setMode(this)"
-              name="level"
-            />Medium</label
-          >
+            <label
+              ><input
+                type="radio"
+                data-level="Medium"
+                onclick="setMode(this)"
+                name="level"
+              />Medium</label
+            >
 
-          <label
-            ><input
-              type="radio"
-              data-level="Expert"
-              onclick="setMode(this)"
-              name="level"
-            />Expert</label
-          >
+            <label
+              ><input
+                type="radio"
+                data-level="Expert"
+                onclick="setMode(this)"
+                name="level"
+              />Expert</label
+            >
+          </div>
+          <div class="lives">Lives Left: <span>3</span></div>
+          <div class="timer"><span>00:00:00</span></div>
+          <div class="game-controller"></div>
         </div>
-        <div class="timer">00:00:00</div>
-        <div class="game-controller"></div>
+        <div class="board-container"></div>
       </div>
-      <div class="board-container"></div>
+      <div class="indicator"><span>YOU STEPPED ON A MINE!</span></div>
+      <div class="game-modal">
+        <p></p>
+        <button class="playagain-btn" onclick="resetGame()">Play again</button>
+      </div>
     </div>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>

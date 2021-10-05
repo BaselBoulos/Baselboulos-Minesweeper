@@ -3,20 +3,17 @@
 /*
 
 TODOs:
-
 - Save the seconds in the gGame object, don't forget to reset when reseting the game and init
-- Make modals divs for WIN/LOSE/LIVES..Etc
 
 -Ideas-
 - probably can make isWin property in the gGame object..and do something with it to check winning
-- Check all the guidelines and read the PDF again
 - Can do something with the levels, maybe 1 object for each level in gLevel ? instead of setMode or something
 
 */
 
 const MINE = '💣'
 const FLAG = '🚩'
-const EMPTY = '🗅'
+const EMPTY = '0'
 const DEFAULT_SMILEY = '😊'
 const DEAD_SMILEY = '🥴'
 const WINNER_SMILEY = '😎'
@@ -89,12 +86,23 @@ function cellClicked(i, j, event) {
   if (gBoard[i][j].isMine) {
     if (gLives) {
       gBoard[i][j].isShown = true
-      renderCell(pos, MINE)
       gGame.shownCount++
-      renderSmiley(DEAD_SMILEY)
+      renderCell(pos, MINE)
       gLives--
+      var elLivesSpan = document.querySelector('.lives span')
+      elLivesSpan.innerText = gLives
+      var elIndicator = document.querySelector('.indicator')
+      elIndicator.style.visibility = 'visible'
+      renderSmiley(DEAD_SMILEY)
+      gGame.isOn = !gGame.isOn
+      setTimeout(() => {
+        elIndicator.style.visibility = 'hidden'
+        renderSmiley(DEFAULT_SMILEY)
+        gGame.isOn = !gGame.isOn
+      }, 1000)
     } else {
       gameOver()
+      return
     }
     isVictory()
     return
@@ -105,7 +113,6 @@ function cellClicked(i, j, event) {
   if (!cellNegsCount) expandShown(gBoard, i, j)
   gBoard[i][j].isShown = true
   renderCell(pos, cellVal)
-  renderSmiley(DEFAULT_SMILEY)
   gGame.shownCount++
   isVictory()
 }
@@ -171,7 +178,7 @@ function getRandNonMinePos(board) {
 function setMinesNegsCount(board) {
   var mineNegsCount = 0
   for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board.length[0]; j++) {
+    for (var j = 0; j < board[0].length; j++) {
       mineNegsCount = countMineNegs(i, j, board)
       board[i][j].minesAroundCount = mineNegsCount
     }
@@ -200,10 +207,17 @@ function cellMarked(cellI, cellJ) {
 }
 
 function resetGame() {
-  var timer = document.querySelector('.timer')
-  timer.innerText = '00:00:00'
+  var elTimerSpan = document.querySelector('.timer span')
+  elTimerSpan.innerText = '00:00:00'
   clearInterval(gTimerInterval)
   if (gTimerInterval) gTimerInterval = null
+  gLives = 3
+  var elLivesSpan = document.querySelector('.lives span')
+  elLivesSpan.innerText = gLives
+  var elGameOverModal = document.querySelector('.game-modal')
+  elGameOverModal.style.display = 'none'
+  var elModalTxt = elGameOverModal.querySelector('p')
+  elModalTxt.innerText = ''
   isTimerOn = !isTimerOn
   gMinesPos = []
   initGame()
@@ -220,7 +234,10 @@ function gameOver() {
   clearInterval(gTimerInterval)
   if (gTimerInterval) gTimerInterval = null
   renderSmiley(DEAD_SMILEY)
-  console.log('You lost..Make a modal here.')
+  var elGameOverModal = document.querySelector('.game-modal')
+  elGameOverModal.style.display = 'block'
+  var elModalTxt = elGameOverModal.querySelector('p')
+  elModalTxt.innerText = 'GAMEOVER'
 }
 
 function isVictory() {
@@ -232,7 +249,10 @@ function isVictory() {
   if (gTimerInterval) gTimerInterval = null
   gGame.isOn = false
   renderSmiley(WINNER_SMILEY)
-  console.log('You are a Winner make a modal')
+  var elGameOverModal = document.querySelector('.game-modal')
+  elGameOverModal.style.display = 'block'
+  var elModalTxt = elGameOverModal.querySelector('p')
+  elModalTxt.innerText = 'VICTORY'
 }
 
 function setMode(elMode) {
@@ -258,7 +278,7 @@ function setMode(elMode) {
 }
 
 function startTimer(startTime) {
-  var elTimer = document.querySelector('.timer')
+  var elTimerSpan = document.querySelector('.timer span')
   gTimerInterval = setInterval(() => {
     var totalSecs = Math.floor((Date.now() - startTime) / 1000)
     var hour = Math.floor(totalSecs / 3600)
@@ -267,7 +287,7 @@ function startTimer(startTime) {
     if (hour < 10) hour = '0' + hour
     if (minute < 10) minute = '0' + minute
     if (seconds < 10) seconds = '0' + seconds
-    elTimer.innerHTML = `${hour}:${minute}:${seconds}`
+    elTimerSpan.innerHTML = `${hour}:${minute}:${seconds}`
   }, 1000)
 }
 
@@ -277,8 +297,8 @@ function renderCell(pos, value) {
 }
 
 function renderSmiley(smiley) {
-  var elMainContainer = document.querySelector('.game-controller')
-  elMainContainer.innerHTML = `<span class="smiley" onclick="resetGame()">${smiley}</span>`
+  var elGameController = document.querySelector('.game-controller')
+  elGameController.innerHTML = `<span class="smiley" onclick="resetGame()">${smiley}</span>`
 }
 
 // Currently only used for debugging
