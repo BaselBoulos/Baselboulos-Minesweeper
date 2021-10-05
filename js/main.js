@@ -94,13 +94,16 @@ function cellClicked(elCell, i, j, event) {
 
   var cellNegsCount = gBoard[i][j].minesAroundCount
   var cellVal = cellNegsCount > 0 ? cellNegsCount : EMPTY
-  if (!cellNegsCount) expandShown(gBoard, i, j)
-  // Model:
-  gBoard[i][j].isShown = !gBoard[i][j].isShown
-  // DOM:
-  renderCell(cellPos, cellVal)
-  elCell.classList.add('revealed')
-  gGame.shownCount++
+  if (cellNegsCount) {
+    // Model:
+    gBoard[i][j].isShown = !gBoard[i][j].isShown
+    // DOM:
+    renderCell(cellPos, cellVal)
+    elCell.classList.add('revealed')
+    gGame.shownCount++
+  } else {
+    expandShown(gBoard, i, j)
+  }
   isVictory()
 }
 
@@ -145,7 +148,7 @@ function expandShown(board, cellI, cellJ) {
   for (var i = cellI - 1; i <= cellI + 1; i++) {
     if (i < 0 || i >= board.length) continue
     for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-      if (i === cellI && j === cellJ) continue
+      // if (i === cellI && j === cellJ) continue
       if (j < 0 || j >= board[i].length) continue
       if (
         !board[i][j].isMarked &&
@@ -176,7 +179,8 @@ function setMinesOnBoard(board, minesCount) {
     var pos = getRandNonMinePos(board)
     gMinesPos.push(pos)
     board[pos.i][pos.j].isMine = !board[pos.i][pos.j].isMine
-    if (board[pos.i][pos.j].isMarked) gFlagMinesCnt++
+    if (board[pos.i][pos.j].isMarked && board[pos.i][pos.j].isMine)
+      gFlagMinesCnt++
   }
   return board
 }
@@ -200,6 +204,7 @@ function setMinesNegsCount(board) {
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board[0].length; j++) {
       negsCount = countMineNegs(i, j, board)
+      if (board[i][j].isShown) continue
       board[i][j].minesAroundCount = negsCount
     }
   }
@@ -232,6 +237,8 @@ function gameOver() {
 
 function isVictory() {
   var totalCells = gLevel.SIZE ** 2
+  console.log('gFlagMinesCnt', gFlagMinesCnt)
+  console.log('gGame.shownCount', gGame.shownCount)
   var playedCellsCount = gGame.shownCount + gFlagMinesCnt
   var isWinner = playedCellsCount === totalCells ? true : false
   if (!isWinner) return
@@ -317,6 +324,7 @@ function handleLocalStorage() {
   }
 }
 
+// Doesn't show the time right after 1 + mins
 function renderBestScore() {
   var highestScore = +localStorage.getItem(`bestScore-board-${gLevel.SIZE}`)
   if (!highestScore) {
