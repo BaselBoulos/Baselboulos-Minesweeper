@@ -119,6 +119,10 @@ body {
   opacity: 1;
 }
 
+.safeclick-btn span span {
+  color: red;
+}
+
 .board-container table {
   border-collapse: collapse;
   border: 2px solid #ccc;

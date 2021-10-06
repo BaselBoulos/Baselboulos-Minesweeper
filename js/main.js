@@ -31,6 +31,8 @@ function initGame() {
   gGame.shownCount = 0
   gGame.secsPassed = 0
   gLives = 3
+  var elLivesSpan = document.querySelector('.lives span')
+  elLivesSpan.innerText = gLives
   gMinesPos = []
   gIsTimerOn = false
   renderSmiley(DEFAULT_SMILEY)
@@ -39,6 +41,8 @@ function initGame() {
   gCurrHintId = null
   gIsHintMode = false
   gSafeClicks = 3
+  var elSafeClickBtnTxt = document.querySelector('.safeclick-btn span span')
+  elSafeClickBtnTxt.innerText = `${gSafeClicks}`
   gIsSafeMode = false
   renderBestScore()
   renderHints()
@@ -50,9 +54,6 @@ function resetGame() {
   if (gTimerInterval) gTimerInterval = null
   var elTimerSpan = document.querySelector('.timer span')
   elTimerSpan.innerText = '00:00:00'
-  gLives = 3
-  var elLivesSpan = document.querySelector('.lives span')
-  elLivesSpan.innerText = gLives
   var elGameOverModal = document.querySelector('.finish-modal')
   elGameOverModal.style.display = 'none'
   var elModalTxt = elGameOverModal.querySelector('p')
@@ -61,7 +62,6 @@ function resetGame() {
   gGame.secsPassed = 0
   var elSafeClickBtn = document.querySelector('.safeclick-btn')
   elSafeClickBtn.style.opacity = '1'
-
   initGame()
 }
 
@@ -473,6 +473,8 @@ function safeClick() {
   if (gIsSafeMode || !gSafeClicks) return
   gGame.isOn = !gGame.isOn
   gSafeClicks--
+  var elSafeClickBtnTxt = document.querySelector('.safeclick-btn span span')
+  elSafeClickBtnTxt.innerText = `${gSafeClicks}`
   gIsSafeMode = !gIsSafeMode
   var cellPos = getRandNonMinePos(gBoard)
   var selector = '.' + getClassName(cellPos)
