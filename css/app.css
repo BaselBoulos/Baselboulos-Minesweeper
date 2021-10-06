@@ -71,6 +71,7 @@ body {
 }
 
 .hints span {
+  display: inline-block;
   font-size: 30px;
   cursor: pointer;
   transition: 1s ease;
