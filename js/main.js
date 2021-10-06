@@ -489,7 +489,6 @@ function safeClick() {
     var elSafeClickBtn = document.querySelector('.safeclick-btn')
     elSafeClickBtn.style.opacity = '0.3'
     handleElIndicator('visible', 'red', 'NO SAFE CELLS AVAILABLE')
-    console.log(gIsSafeMode)
     return
   }
   gGame.isOn = !gGame.isOn
