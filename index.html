@@ -19,7 +19,7 @@
               ><input
                 type="radio"
                 data-level="Beginner"
-                onclick="setMode(this)"
+                onclick="setGameMode(this)"
                 name="level"
                 checked
               />Beginner</label
@@ -29,7 +29,7 @@
               ><input
                 type="radio"
                 data-level="Medium"
-                onclick="setMode(this)"
+                onclick="setGameMode(this)"
                 name="level"
               />Medium</label
             >
@@ -38,7 +38,7 @@
               ><input
                 type="radio"
                 data-level="Expert"
-                onclick="setMode(this)"
+                onclick="setGameMode(this)"
                 name="level"
               />Expert</label
             >
@@ -47,11 +47,14 @@
           <div class="best-score">Best Score: <span>00:00:00</span></div>
           <div class="timer"><span>00:00:00</span></div>
           <div class="game-controller"></div>
+          <button class="safeclick-btn" onclick="safeClick()">
+            Safe click
+          </button>
+          <div class="hints"></div>
         </div>
         <div class="board-container"></div>
-        <div class="hints"></div>
         <div class="indicator"><span></span></div>
-        <div class="game-modal">
+        <div class="finish-modal">
           <p>GAME ON</p>
           <button class="playagain-btn" onclick="resetGame()">
             Play again
