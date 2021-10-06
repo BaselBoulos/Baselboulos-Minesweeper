@@ -89,17 +89,24 @@ function cellClicked(elCell, i, j, event) {
     gIsTimerOn = !gIsTimerOn
   }
 
-  if (gIsHintMode) {
-    cellClickedHintMode(i, j)
-    return
-  }
-
   if (event.button === 2) {
-    handleRightClick(i, j)
+    if (gIsHintMode)
+      handleElIndicator(
+        'visible',
+        'red',
+        'CANNOT DO THIS\nYOU ARE ON HINT MODE'
+      )
+    else handleRightClick(i, j)
+
     return
   }
 
   if (gBoard[i][j].isMarked) return
+
+  if (gIsHintMode) {
+    cellClickedHintMode(i, j)
+    return
+  }
 
   var cellPos = { i, j }
   // First click
@@ -395,7 +402,7 @@ function handleHintMode(elHint) {
     handleElIndicator(
       'visible',
       'red',
-      'YOU CAN ONLY USE HINT AFTER FIRST CLICK'
+      'YOU CAN ONLY USE HINT\n AFTER FIRST LEFT CLICK ON BOARD'
     )
     gGame.isOn = !gGame.isOn
     setTimeout(() => {
