@@ -230,7 +230,7 @@ function getRandNonMinePos(board) {
         nonMineCells.push({ i: i, j: j })
     }
   }
-  if (!nonMineCells.length) return
+  if (!nonMineCells.length) return false
   var randIdx = getRandomInt(0, nonMineCells.length - 1)
   var randCellPos = nonMineCells[randIdx]
   return randCellPos
@@ -471,12 +471,32 @@ function renderCell(pos, value) {
 
 function safeClick() {
   if (gIsSafeMode || !gSafeClicks) return
+  if (!gGame.shownCount) {
+    handleElIndicator(
+      'visible',
+      'red',
+      'YOU CAN ONLY USE SAFE CLICK AFTER FIRST CLICK'
+    )
+    gGame.isOn = !gGame.isOn
+    setTimeout(() => {
+      handleElIndicator('hidden', 'red', '')
+      gGame.isOn = !gGame.isOn
+    }, 1000)
+    return
+  }
+  var cellPos = getRandNonMinePos(gBoard)
+  if (!cellPos) {
+    var elSafeClickBtn = document.querySelector('.safeclick-btn')
+    elSafeClickBtn.style.opacity = '0.3'
+    handleElIndicator('visible', 'red', 'NO SAFE CELLS AVAILABLE')
+    console.log(gIsSafeMode)
+    return
+  }
   gGame.isOn = !gGame.isOn
   gSafeClicks--
   var elSafeClickBtnTxt = document.querySelector('.safeclick-btn span span')
   elSafeClickBtnTxt.innerText = `${gSafeClicks}`
   gIsSafeMode = !gIsSafeMode
-  var cellPos = getRandNonMinePos(gBoard)
   var selector = '.' + getClassName(cellPos)
   var elCurrCell = document.querySelector(selector)
   elCurrCell.classList.add('safe')
