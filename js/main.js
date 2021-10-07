@@ -88,7 +88,6 @@ function cellClicked(elCell, i, j, event) {
     startTimer(Date.now())
     gIsTimerOn = !gIsTimerOn
   }
-
   if (event.button === 2) {
     if (gIsHintMode)
       handleElIndicator(
@@ -97,17 +96,13 @@ function cellClicked(elCell, i, j, event) {
         'CANNOT DO THIS\nYOU ARE ON HINT MODE'
       )
     else handleRightClick(i, j)
-
     return
   }
-
   if (gBoard[i][j].isMarked) return
-
   if (gIsHintMode) {
     cellClickedHintMode(i, j)
     return
   }
-
   var cellPos = { i, j }
   // First click
   if (!gGame.shownCount) {
@@ -124,7 +119,6 @@ function cellClicked(elCell, i, j, event) {
     printBoard(gBoard)
     return
   }
-
   if (gBoard[i][j].isMine) {
     if (!gLives) gameOver()
     // Model:
@@ -136,7 +130,6 @@ function cellClicked(elCell, i, j, event) {
     updateLives()
     return
   }
-
   var cellNegsCount = gBoard[i][j].minesAroundCount
   var cellVal = cellNegsCount > 0 ? cellNegsCount : EMPTY
   if (cellNegsCount) {
