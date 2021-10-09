@@ -1,3 +1,5 @@
+'use strict'
+
 function renderBoard(board, selector) {
   var strHTML = `<table oncontextmenu="return false" border="0"><tbody>`
   for (var i = 0; i < board.length; i++) {
