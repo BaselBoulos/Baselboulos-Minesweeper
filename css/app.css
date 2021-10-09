@@ -5,36 +5,38 @@ body {
 }
 
 .page-header {
+  color: #869c9c;
   font-family: Cursive;
   letter-spacing: 3px;
-  color: #869c9c;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
     0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.main-container {
-  padding: 10px;
-  width: auto;
-}
-
 .game-window {
-  /* display: table; */
   width: 100%;
   text-align: center;
   margin: auto;
 }
 
-.levels,
-.smiley,
-.game-controller {
-  margin: 2px;
-  padding: 3px;
+.control-btn {
   font-size: 25px;
+  padding: 3px;
+  margin: 2px;
 }
 
-.timer,
-.best-score,
-.lives {
+.control-btn:hover {
+  color: yellowgreen;
+  cursor: pointer;
+  position: relative;
+  top: 1px;
+}
+
+.control-btn:active {
+  position: relative;
+  top: 2px;
+}
+
+.info {
   display: inline-block;
   margin: 5px;
   padding: 5px;
@@ -45,25 +47,46 @@ body {
   color: red;
 }
 
-.levels label:hover,
-.smiley:hover {
-  color: yellowgreen;
-  cursor: pointer;
-  position: relative;
-  top: 1px;
-}
-
-.levels label:active,
-.smiley:active {
-  position: relative;
-  top: 2px;
-}
-
 .board-container {
   text-align: center;
-  margin: auto;
   width: fit-content;
   height: fit-content;
+  margin: auto;
+}
+
+.safeclick-btn {
+  background-color: #1c87c9;
+  border-radius: 60px;
+  border: none;
+  cursor: pointer;
+  color: #eeeeee;
+  font-family: sans-serif;
+  font-size: 20px;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  float: left;
+  animation: glowing 2000ms infinite;
+  opacity: 1;
+}
+
+@keyframes glowing {
+  0% {
+    background-color: #2ba805;
+    box-shadow: 0 0 5px #2ba805;
+  }
+  50% {
+    background-color: #49e819;
+    box-shadow: 0 0 20px #49e819;
+  }
+  100% {
+    background-color: #2ba805;
+    box-shadow: 0 0 5px #2ba805;
+  }
+}
+
+.safeclick-btn span span {
+  color: red;
 }
 
 .hints {
@@ -86,49 +109,10 @@ body {
   top: 2px;
 }
 
-.safeclick-btn {
-  background-color: #1c87c9;
-  -webkit-border-radius: 60px;
-  border-radius: 60px;
-  border: none;
-  color: #eeeeee;
-  cursor: pointer;
-  float: left;
-  font-family: sans-serif;
-  font-size: 20px;
-  padding: 10px 10px;
-  text-align: center;
-  text-decoration: none;
-}
-@keyframes glowing {
-  0% {
-    background-color: #2ba805;
-    box-shadow: 0 0 5px #2ba805;
-  }
-  50% {
-    background-color: #49e819;
-    box-shadow: 0 0 20px #49e819;
-  }
-  100% {
-    background-color: #2ba805;
-    box-shadow: 0 0 5px #2ba805;
-  }
-}
-
-.safeclick-btn {
-  animation: glowing 2000ms infinite;
-  opacity: 1;
-}
-
-.safeclick-btn span span {
-  color: red;
-}
-
 .board-container table {
   border-collapse: collapse;
   border: 2px solid #ccc;
   border-radius: 5px;
-  -webkit-box-shadow: 0px 0px 15px 5px rgba(82, 54, 240, 0.79);
   box-shadow: 0px 0px 15px 5px rgba(18, 135, 198, 0.79);
 }
 
@@ -151,8 +135,6 @@ body {
 .cell:hover {
   cursor: pointer;
   background-color: darkcyan;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
 }
 
@@ -162,8 +144,6 @@ body {
 
 .cell.revealed {
   background-color: darkcyan;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
   cursor: default;
 }

@@ -1,8 +1,8 @@
-function printMat(mat, selector) {
+function renderBoard(board, selector) {
   var strHTML = `<table oncontextmenu="return false" border="0"><tbody>`
-  for (var i = 0; i < mat.length; i++) {
+  for (var i = 0; i < board.length; i++) {
     strHTML += `<tr>`
-    for (var j = 0; j < mat[0].length; j++) {
+    for (var j = 0; j < board[0].length; j++) {
       var className = `cell cell-${i}-${j}`
       strHTML += `<td class="${className}" onmousedown="cellClicked(this,${i},${j},event)"></td>`
     }
@@ -27,13 +27,20 @@ function printBoard(board) {
   console.table(printedBoard)
 }
 
+function renderCell(pos, value) {
+  var selector = getClassName(pos)
+  var elCell = document.querySelector(`.${selector}`)
+  elCell.innerHTML = value
+}
+
 function getClassName(pos) {
   var cellClass = 'cell-' + pos.i + '-' + pos.j
   return cellClass
 }
 
+// The maximum is inclusive and the minimum is inclusive
 function getRandomInt(min, max) {
   min = Math.ceil(min)
   max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min + 1) + min) //The maximum is inclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min + 1) + min)
 }

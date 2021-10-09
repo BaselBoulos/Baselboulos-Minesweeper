@@ -15,7 +15,7 @@
       <div class="game-window">
         <div class="controls">
           <div class="levels">
-            <label
+            <label class="control-btn"
               ><input
                 type="radio"
                 data-level="Beginner"
@@ -25,7 +25,7 @@
               />Beginner</label
             >
 
-            <label
+            <label class="control-btn"
               ><input
                 type="radio"
                 data-level="Medium"
@@ -34,7 +34,7 @@
               />Medium</label
             >
 
-            <label
+            <label class="control-btn"
               ><input
                 type="radio"
                 data-level="Expert"
@@ -43,9 +43,9 @@
               />Expert</label
             >
           </div>
-          <div class="lives">Lives Left: <span></span></div>
-          <div class="best-score">Best Score: <span>00:00:00</span></div>
-          <div class="timer"><span>00:00:00</span></div>
+          <div class="info lives">Lives Left: <span></span></div>
+          <div class="info best-score">Best Score: <span>00:00:00</span></div>
+          <div class="info timer"><span>00:00:00</span></div>
           <div class="game-controller"></div>
           <button class="safeclick-btn" onclick="safeClick()">
             <span>Safe click: <span></span></span>
@@ -55,7 +55,7 @@
         <div class="board-container"></div>
         <div class="indicator"><span></span></div>
         <div class="finish-modal">
-          <p>GAME ON</p>
+          <p></p>
           <button class="playagain-btn" onclick="resetGame()">
             <span>Play again</span>
           </button>
