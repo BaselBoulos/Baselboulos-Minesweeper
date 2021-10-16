@@ -5,24 +5,25 @@ const DEAD_SMILEY = '🥴'
 const WINNER_SMILEY = '😎'
 const HINT = '💡'
 
-var gGame = {
-  isOn: false,
-  shownCount: 0,
-  markedCount: 0,
-  secsPassed: 0,
-  isHintMode: false,
-  isSafeMode: false,
-  isTimerOn: false,
-  level: { SIZE: 4, MINES: 2 },
-  livesCount: 3,
-  safeClicksCount: 3,
-  hintsCount: 3,
-  flaggedMinesCount: 0,
-}
+var gGame
 var gTimerInterval
 var gCurrHintId
 
 function initGame() {
+  gGame = {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+    isHintMode: false,
+    isSafeMode: false,
+    isTimerOn: false,
+    level: { SIZE: 4, MINES: 2 },
+    livesCount: 3,
+    safeClicksCount: 3,
+    hintsCount: 3,
+    flaggedMinesCount: 0,
+  }
   gBoard = buildBoard(gGame.level.SIZE, gGame.level.MINES)
   gGame.flaggedMinesCount = 0
   renderBoard(gBoard, '.board-container')
@@ -190,13 +191,14 @@ function renderBestScore() {
 }
 
 function getTime(totalSecs) {
-  var hour = Math.floor(totalSecs / 3600)
-  var minute = Math.floor((totalSecs - hour * 3600) / 60)
-  var seconds = totalSecs - (hour * 3600 + minute * 60)
-  if (hour < 10) hour = '0' + hour
-  if (minute < 10) minute = '0' + minute
-  if (seconds < 10) seconds = '0' + seconds
-  return `${hour}:${minute}:${seconds}`
+  var hour = Math.floor(totalSecs / 3600).toString()
+  var minute = Math.floor((totalSecs - hour * 3600) / 60).toString()
+  var seconds = (totalSecs - (hour * 3600 + minute * 60)).toString()
+  return `
+  ${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:${seconds.padStart(
+    2,
+    '0'
+  )}`
 }
 
 function renderHints() {

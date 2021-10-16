@@ -30,6 +30,8 @@ function cellClicked(elCell, i, j, event) {
     startTimer(Date.now())
     gGame.isTimerOn = !gGame.isTimerOn
   }
+  // TODO:
+  // @CR: look cr in utils.js line 7
   if (event.button === 2) {
     if (gGame.isHintMode)
       handleElIndicator(
@@ -142,16 +144,16 @@ function expandShown(board, cellI, cellJ) {
 
 function setMinesOnBoard(board, minesCount) {
   for (var i = 0; i < minesCount; i++) {
-    var pos = getRandNonMinePos(board)
+    var pos = getEmptyLocations(board)
     gMinesPos.push(pos)
-    board[pos.i][pos.j].isMine = !board[pos.i][pos.j].isMine
-    if (board[pos.i][pos.j].isMarked && board[pos.i][pos.j].isMine)
-      gGame.flaggedMinesCount++
+    var cell = board[pos.i][pos.j]
+    cell.isMine = !cell.isMine
+    if (cell.isMarked && cell.isMine) gGame.flaggedMinesCount++
   }
   return board
 }
 
-function getRandNonMinePos(board) {
+function getEmptyLocations(board) {
   var nonMineCells = []
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board[0].length; j++) {
@@ -290,7 +292,7 @@ function safeClick() {
     }, 1000)
     return
   }
-  var cellPos = getRandNonMinePos(gBoard)
+  var cellPos = getEmptyLocations(gBoard)
   if (!cellPos) {
     var elSafeClickBtn = document.querySelector('.safeclick-btn')
     elSafeClickBtn.style.opacity = '0.3'

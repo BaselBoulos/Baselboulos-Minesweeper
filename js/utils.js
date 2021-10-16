@@ -6,6 +6,11 @@ function renderBoard(board, selector) {
     strHTML += `<tr>`
     for (var j = 0; j < board[0].length; j++) {
       var className = `cell cell-${i}-${j}`
+      // TODO:
+      // @CR: I would use different events. for exp:
+      // onclick="cellClicked(...args)"
+      // oncontextmenu="cellMarked(...args)"
+      // more clean and detailed like that
       strHTML += `<td class="${className}" onmousedown="cellClicked(this,${i},${j},event)"></td>`
     }
     strHTML += `<tr>`
