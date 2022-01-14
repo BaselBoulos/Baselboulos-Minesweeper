@@ -1,4 +1,7 @@
 # baselboulos-minesweeper
+
+https://baselboulos.github.io/baselboulos-minesweeper/
+
 Sprint 1 - Coding Academy - BootCamp
 
 Vanilla JS & CSS
